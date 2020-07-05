@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -Eeuo pipefail
+
+db_file=var/sortr.sqlite3
+
+if [ ! -f "$db_file" ]; then
+  bin/sortrdb create
+fi
+
+export FLASK_DEBUG=True
+export FLASK_APP=sortr
+export SORTR_SETTINGS=config.py
+flask run --host 0.0.0.0 --port 8000

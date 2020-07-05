@@ -1,0 +1,20 @@
+# npm
+node_modules
+
+# Metadata
+.vscode
+.DS_Store
+
+# Python
+*.pyc
+__pycache__/
+*.egg-info*
+dist/
+env/
+venv/
+venv3/
+.venv/
+.pytest_cache
+
+# webpack
+bundle.js
