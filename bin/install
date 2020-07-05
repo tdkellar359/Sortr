@@ -20,3 +20,9 @@ set -u
 pip install -e .
 
 npm install .
+
+admin_folder=dir/admin
+if [ ! -f "$admin_folder" ]; then
+  mkdir dir
+  mkdir dir/admin
+fi

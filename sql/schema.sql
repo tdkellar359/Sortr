@@ -1,5 +1,3 @@
-PRAGMA foreign_keys = ON;
-
 CREATE TABLE Users (
     Username VARCHAR(30) NOT NULL,
     Email VARCHAR(50) NOT NULL,

@@ -1,0 +1,21 @@
+.Header > .content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 10vh;
+  width: 100%;
+  background-color: red;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Header > .dummy {
+  display: block;
+  height: 10vh;
+}
+
+.Header .login {
+  margin-left: 4vw;
+}
