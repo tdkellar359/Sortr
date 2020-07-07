@@ -12,10 +12,6 @@ if [ ! -f "$db_file" ]; then
   bin/sortrdb create
 fi
 
-if [ $1 == "build" ]; then
-  
-fi
-
 export FLASK_DEBUG=True
 export FLASK_APP=sortr
 export SORTR_SETTINGS=config.py

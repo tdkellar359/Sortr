@@ -1,6 +1,8 @@
 import flask
 import sortr
 import os
+import base64
+import binascii
 
 
 """
@@ -23,30 +25,43 @@ Return:
         next: string | null
     }
 """
-@sortr.app.route('/api/v1/directory/folders/<path:subpath>')
-def get_folders(subpath):
-    user_path = os.path.join(
-        sortr.app.config["DIRECTORY_ROOT"],
-        subpath
-    )
+@sortr.app.route('/api/v1/directory/folders/<path:path_hash>')
+def get_folders(path_hash):
+    # TODO: Get username
+    username = "admin"
 
     res = {
         "url": flask.request.path,
         "results": [],
-        "next": ""
+        "next": "",
+        "message": "success"
     }
 
     try:
-        res = [
-            { folder, os.path.join(user_path, folder) }
+        subpath = base64.urlsafe_b64decode(path_hash).decode('utf-8')
+        subpath = subpath.replace("home", username, 1)
+        user_path = os.path.join(
+            sortr.app.config["DIRECTORY_ROOT"],
+            subpath
+        )
+    except binascii.Error as err:
+        res["message"] = "The file path was not specified correctly."
+        return flask.jsonify(**res), 400
+
+    try:
+        res["results"] = [
+            { "name": folder, "path": os.path.join(user_path, folder) }
             for folder
             in os.listdir(user_path)
             if os.path.isdir(os.path.join(user_path, folder))
         ]
     except FileNotFoundError as err:
-        return flask.abort(400)
+        res["message"] = err.strerror
+        return flask.jsonify(**res), 404
 
-    return flask.jsonify(res)
+    print(res)
+
+    return flask.jsonify(**res)
 
 
 """
@@ -69,19 +84,37 @@ Return:
         next: string | null
     }
 """
-@sortr.app.route('/api/v1/directory/files/<path:subpath>')
-def get_files(subpath):
-    user_path = os.path.join(
-        sortr.app.config["DIRECTORY_ROOT"],
-        subpath
-    )
+@sortr.app.route('/api/v1/directory/files/<path:path_hash>')
+def get_files(path_hash):
+    username = "admin"
+
+    res = {
+        "url": flask.request.path,
+        "results": [],
+        "next": "",
+        "message": "success"
+    }
 
     try:
-        res = [
-            file for file in os.listdir(user_path)
+        subpath = base64.urlsafe_b64decode(path_hash).decode('utf-8')
+        subpath = subpath.replace("home", username, 1)
+        user_path = os.path.join(
+            sortr.app.config["DIRECTORY_ROOT"],
+            subpath
+        )
+    except binascii.Error as err:
+        res["message"] = "The file path was not specified correctly."
+        return flask.jsonify(**res), 400
+
+    try:
+        res["results"] = [
+            { "name": file, "path": os.path.join(user_path, file) }
+            for file
+            in os.listdir(user_path)
             if os.path.isfile(os.path.join(user_path, file))
         ]
     except FileNotFoundError as err:
-        return flask.abort(400)
+        res["message"] = "The requested path was not found."
+        return flask.jsonify(**res), 404
 
-    return flask.jsonify(res)
+    return flask.jsonify(**res)

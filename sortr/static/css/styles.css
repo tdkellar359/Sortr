@@ -1,6 +1,6 @@
 /* Global Styles */
 
-a {
+/* a {
   color: white;
   text-decoration: none;
 
@@ -9,7 +9,11 @@ a {
 
 a:hover {
   text-decoration: underline;
-  font-size: 105%;
 
   transition: 0.25s ease-in-out;
+} */
+
+body, html {
+  height: 100%;
+  width: 100%;
 }

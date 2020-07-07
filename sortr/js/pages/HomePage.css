@@ -1,0 +1,22 @@
+a.directory-item {
+  border: solid lightgrey 2px !important;
+  color: #6C757D !important;
+  transition: 500ms;
+}
+
+a.directory-item:hover {
+  border: solid #007BFF 2px !important;
+  color: #007BFF !important;
+  text-decoration: none !important;
+  transition: 250ms;
+}
+
+.button-icon-background {
+  padding: 5px;
+  border-radius: 50%;
+  transition: 250ms;
+}
+
+.button-icon-background:hover {
+  background-color: lightgrey;
+}

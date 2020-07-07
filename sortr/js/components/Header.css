@@ -1,21 +1,16 @@
-.Header > .content {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 10vh;
-  width: 100%;
-  background-color: red;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.navbar-nav .dropdown #account-nav-dropdown {
+  color: rgba(0, 123, 255, 1);
+  transition: 500ms ease-in;
+  text-decoration: none;
 }
 
-.Header > .dummy {
-  display: block;
-  height: 10vh;
+.navbar-nav .dropdown #account-nav-dropdown:hover {
+  color: white;
+  transition: 500ms ease-out;
+  text-decoration: underline;
 }
 
-.Header .login {
-  margin-left: 4vw;
+.navbar-nav .dropdown #account-nav-dropdown:focus {
+  color: white;
+  transition: 500ms ease-in-out;
 }
