@@ -1,27 +1,35 @@
-import React from "react";
-import { Route, Redirect, useRouteMatch } from "react-router-dom";
-import { useAuth } from "./auth";
+import React from 'react';
+import { PropTypes } from 'prop-types';
+import { Route, Redirect } from 'react-router-dom';
+import Spinner from 'react-bootstrap/Spinner';
+import { useAuth } from './auth';
 
-function PrivateRoute({ children, ...rest }) {
-  const auth = useAuth();
+function PrivateRoute({ children, path }) {
+  const { authenticating, authenticated } = useAuth();
+
+  if (authenticating) {
+    return (
+      <div className="mt-5 text-center">
+        <Spinner animation="grow" variant="primary" />
+      </div>
+    );
+  }
 
   return (
     <Route
-      {...rest}
-      render={({ location }) =>
-        auth.authenticated ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location }
-            }}
-          />
-        )
-      }
+      path={path}
+      render={() => (
+        authenticated
+          ? children
+          : <Redirect to="/login" />
+      )}
     />
   );
 }
+
+PrivateRoute.propTypes = {
+  children: PropTypes.node.isRequired,
+  path: PropTypes.string.isRequired,
+};
 
 export default PrivateRoute;

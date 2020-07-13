@@ -1,66 +1,95 @@
-import React, { Component } from 'react';
-import LoginPage from './pages/LoginPage';
-import SignUpPage from './pages/SignUpPage';
-import PublicPage from './pages/PublicPage';
-import HomePage from './pages/HomePage';
-import PrivateRoute from './auth/PrivateRoute';
-import { AuthContext } from './auth/auth';
-import Header from './components/Header';
+import React, { Component, Suspense } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
 } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
+import PublicPage from './pages/PublicPage';
+import HomePage from './pages/HomePage/HomePage';
+import PrivateRoute from './auth/PrivateRoute';
+import { AuthContext } from './auth/auth';
+import Header from './components/Header';
 
 class Main extends Component {
   constructor() {
     super();
 
     this.state = {
+      authenticating: true,
       authenticated: false,
       username: '',
-      filename: ''
+      filename: '',
     };
   }
 
   componentDidMount() {
-    this.setState({
-      authenticated: true,
-      username: 'admin',
-      filename: '/static/assets/default_profile_pic.png'
-    });
+    fetch('/api/v1/accounts/authenticate')
+      .then((res) => {
+        if (!res.ok) {
+          Promise.reject(res.statusText);
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        if (data.authenticated) {
+          const userInfo = data.data;
+          this.setState({
+            authenticated: true,
+            username: userInfo.username,
+            filename: userInfo.filename,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        this.setState({
+          authenticating: false,
+        });
+      });
   }
 
   render() {
-    const { authenticated, username, filename } = this.state;
     const browseHomePath = btoa('home/');
+    const {
+      authenticating,
+      authenticated,
+      username,
+      filename,
+    } = this.state;
 
     return (
-      <AuthContext.Provider value={{
-        authenticated: authenticated,
-        username: username,
-        filename: filename
-      }}>
+      <AuthContext.Provider
+        value={{
+          authenticating,
+          authenticated,
+          username,
+          filename,
+        }}
+      >
         <Router>
           <div>
 
-            <Header></Header>
+            <Header />
 
             <Switch>
               <Route exact path="/">
-                <PublicPage></PublicPage>
+                <PublicPage />
               </Route>
               <Route path="/login">
-                <LoginPage></LoginPage>
+                <LoginPage />
               </Route>
               <Route path="/signup">
-                <SignUpPage></SignUpPage>
+                <SignUpPage />
               </Route>
-              {/* TODO: Make a protected Route */}
-              <Route path="/browse/:pathHash">
-                <HomePage></HomePage>
-              </Route>
+              <PrivateRoute path="/browse/:pathHash">
+                <HomePage />
+              </PrivateRoute>
               <Route path="/browse">
                 <Redirect to={`/browse/${browseHomePath}`} />
               </Route>
@@ -69,7 +98,7 @@ class Main extends Component {
           </div>
         </Router>
       </AuthContext.Provider>
-    )
+    );
   }
 }
 

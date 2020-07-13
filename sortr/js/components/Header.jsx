@@ -4,39 +4,63 @@ import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/auth';
 import './Header.css';
-import { Link } from 'react-router-dom';
 
 const Header = () => {
+  const { authenticated } = useAuth();
+
   return (
     <NavBar bg="dark" variant="dark">
-      <NavBar.Brand as={Link} to="/browse" className="mr-auto">
-        Sortr
-      </NavBar.Brand>
-      <HeaderContent />
-    </NavBar>
+    <NavBar.Brand as={Link} to={authenticated ? '/browse' : '/'} className="mr-auto">
+      Sortr
+    </NavBar.Brand>
+    <HeaderContent />
+  </NavBar>
   );
-}
+};
 
-const HeaderContent = (props) => {
-  const auth = useAuth();
+const HeaderContent = () => {
+  const {
+    authenticated,
+    authenticating,
+    username,
+    filename,
+  } = useAuth();
 
-  if (auth.authenticated)
+  if (authenticating) {
+    return <Spinner className="mr-3" size="sm" variant="primary" animation="border" />;
+  }
+
+  const signOut = () => {
+    const options = {
+      method: 'POST',
+      credentials: 'same-origin',
+    };
+
+    // TODO: Don't reload the page
+    fetch('/api/v1/accounts/signout', options)
+      .then(() => window.location.reload())
+      .catch((err) => console.error(err));
+  };
+
+  if (authenticated) {
     return (
-      <React.Fragment>
+      <>
         <Nav variant="dark">
-            <Image 
-              src={auth.filename}
-              height={screen.height / 18}
-              width="auto"
-              roundedCircle
-            />
+          <Image
+            src={filename}
+            height={window.screen.height / 18}
+            width="auto"
+            roundedCircle
+          />
         </Nav>
         <Nav>
           <NavDropdown title="Your Account" id="account-nav-dropdown">
-            <NavDropdown.Item disabled={true}>
-              {auth.username}
+            <NavDropdown.Item disabled>
+              {username}
             </NavDropdown.Item>
             <NavDropdown.Divider />
             <NavDropdown.Item as={Link} to="/browse">
@@ -49,35 +73,38 @@ const HeaderContent = (props) => {
               Settings
             </NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item>
+            <NavDropdown.Item onClick={signOut}>
               Sign Out
             </NavDropdown.Item>
           </NavDropdown>
 
         </Nav>
-      </React.Fragment>
+      </>
     );
-  else
-    return (
-      <Nav className="mr-sm-4">
-        <Button 
-          variant="outline-primary"
-          style={{ marginLeft: '10px' }}
-          as={Link}
-          to="/signup"
-        >
-          Sign Up
-        </Button>
-        <Button
-          variant="outline-primary"
-          style={{ marginLeft: '10px' }}
-          as={Link}
-          to="/login"
-        >
-          Log In
-        </Button>
-      </Nav>
-    );
-}
+  }
+
+  console.log(window.location.pathname);
+
+  return (
+    <Nav className="mr-sm-4">
+      <Button
+        variant="outline-primary"
+        style={{ marginLeft: '10px' }}
+        as={Link}
+        to="/signup"
+      >
+        Sign Up
+      </Button>
+      <Button
+        variant="outline-primary"
+        style={{ marginLeft: '10px' }}
+        as={Link}
+        to="/login"
+      >
+        Log In
+      </Button>
+    </Nav>
+  );
+};
 
 export default Header;
