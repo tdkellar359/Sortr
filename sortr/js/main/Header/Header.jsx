@@ -6,52 +6,51 @@ import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../auth/auth';
+import useAuth from '../../context/useAuth';
 import './Header.css';
 
 const Header = () => {
-  const { authenticated } = useAuth();
+  const { auth } = useAuth();
 
   return (
     <NavBar bg="dark" variant="dark">
-    <NavBar.Brand as={Link} to={authenticated ? '/browse' : '/'} className="mr-auto">
-      Sortr
-    </NavBar.Brand>
-    <HeaderContent />
-  </NavBar>
+      <NavBar.Brand as={Link} to={auth.authenticated ? '/browse' : '/'} className="mr-auto">
+        Sortr
+      </NavBar.Brand>
+      <HeaderContent />
+    </NavBar>
   );
 };
 
 const HeaderContent = () => {
   const {
-    authenticated,
-    authenticating,
-    username,
-    filename,
+    auth,
+    signOut,
   } = useAuth();
 
-  if (authenticating) {
+  if (auth.authenticating) {
     return <Spinner className="mr-3" size="sm" variant="primary" animation="border" />;
   }
 
-  const signOut = () => {
+  const onSignOut = () => {
     const options = {
       method: 'POST',
       credentials: 'same-origin',
     };
 
-    // TODO: Don't reload the page
     fetch('/api/v1/accounts/signout', options)
-      .then(() => window.location.reload())
+      .then(() => {
+        signOut();
+      })
       .catch((err) => console.error(err));
   };
 
-  if (authenticated) {
+  if (auth.authenticated) {
     return (
       <>
         <Nav variant="dark">
           <Image
-            src={filename}
+            src={auth.filename}
             height={window.screen.height / 18}
             width="auto"
             roundedCircle
@@ -60,7 +59,7 @@ const HeaderContent = () => {
         <Nav>
           <NavDropdown title="Your Account" id="account-nav-dropdown">
             <NavDropdown.Item disabled>
-              {username}
+              {auth.username}
             </NavDropdown.Item>
             <NavDropdown.Divider />
             <NavDropdown.Item as={Link} to="/browse">
@@ -73,7 +72,7 @@ const HeaderContent = () => {
               Settings
             </NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item onClick={signOut}>
+            <NavDropdown.Item onClick={onSignOut}>
               Sign Out
             </NavDropdown.Item>
           </NavDropdown>
@@ -82,8 +81,6 @@ const HeaderContent = () => {
       </>
     );
   }
-
-  console.log(window.location.pathname);
 
   return (
     <Nav className="mr-sm-4">

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
-import { useAuth } from '../auth/auth';
+import useAuth from '../../context/useAuth';
 
 const FormWrapper = ({ children }) => {
   const formStyle = {
@@ -12,9 +12,9 @@ const FormWrapper = ({ children }) => {
     padding: '30px',
   };
 
-  const isAuthenticated = useAuth().authenticated;
+  const { auth } = useAuth();
 
-  if (isAuthenticated) {
+  if (auth.authenticated) {
     return (
       <Redirect to="/browse" />
     );

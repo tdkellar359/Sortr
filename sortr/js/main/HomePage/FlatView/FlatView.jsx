@@ -181,6 +181,7 @@ const FlexDisplay = ({
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
+    alignContent: 'space-between',
     alignItems: 'center',
     marginBottom: '16px',
   };

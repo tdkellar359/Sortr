@@ -25,8 +25,8 @@ Return:
         next: string | null
     }
 """
-@sortr.app.route('/api/v1/directory/folders/<path:path_hash>')
-def get_folders(path_hash):
+@sortr.app.route('/api/v1/directory/folders/<path:parent_directory_b64>')
+def get_folders(parent_directory_b64):
     # TODO: Get username
     username = "admin"
 
@@ -38,7 +38,7 @@ def get_folders(path_hash):
     }
 
     try:
-        subpath = base64.urlsafe_b64decode(path_hash).decode('utf-8')
+        subpath = base64.urlsafe_b64decode(parent_directory_b64).decode('utf-8')
         subpath = subpath.replace("home", username, 1)
         user_path = os.path.join(
             sortr.app.config["DIRECTORY_ROOT"],
@@ -84,8 +84,8 @@ Return:
         next: string | null
     }
 """
-@sortr.app.route('/api/v1/directory/files/<path:path_hash>')
-def get_files(path_hash):
+@sortr.app.route('/api/v1/directory/files/<path:parent_directory_b64>')
+def get_files(parent_directory_b64):
     username = "admin"
 
     res = {
@@ -96,7 +96,7 @@ def get_files(path_hash):
     }
 
     try:
-        subpath = base64.urlsafe_b64decode(path_hash).decode('utf-8')
+        subpath = base64.urlsafe_b64decode(parent_directory_b64).decode('utf-8')
         subpath = subpath.replace("home", username, 1)
         user_path = os.path.join(
             sortr.app.config["DIRECTORY_ROOT"],

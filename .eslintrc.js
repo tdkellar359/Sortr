@@ -1,8 +1,4 @@
 module.exports = {
-  "loader": "eslint-loader",
-  "options": {
-    "emitWarning": true,
-  },
   "extends": "airbnb",
   "plugins": [
     "react",

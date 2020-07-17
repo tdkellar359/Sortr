@@ -2,12 +2,12 @@ import React from 'react';
 import { PropTypes } from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
 import Spinner from 'react-bootstrap/Spinner';
-import { useAuth } from './auth';
+import useAuth from '../context/useAuth';
 
 function PrivateRoute({ children, path }) {
-  const { authenticating, authenticated } = useAuth();
+  const { auth } = useAuth();
 
-  if (authenticating) {
+  if (auth.uthenticating) {
     return (
       <div className="mt-5 text-center">
         <Spinner animation="grow" variant="primary" />
@@ -19,7 +19,7 @@ function PrivateRoute({ children, path }) {
     <Route
       path={path}
       render={() => (
-        authenticated
+        auth.authenticated
           ? children
           : <Redirect to="/login" />
       )}
