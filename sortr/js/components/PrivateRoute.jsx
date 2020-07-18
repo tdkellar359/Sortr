@@ -5,9 +5,9 @@ import Spinner from 'react-bootstrap/Spinner';
 import useAuth from '../context/useAuth';
 
 function PrivateRoute({ children, path }) {
-  const { auth } = useAuth();
+  const { getFetching, getAuthorized } = useAuth();
 
-  if (auth.uthenticating) {
+  if (getFetching()) {
     return (
       <div className="mt-5 text-center">
         <Spinner animation="grow" variant="primary" />
@@ -15,11 +15,13 @@ function PrivateRoute({ children, path }) {
     );
   }
 
+  console.log('authorized', getAuthorized());
+
   return (
     <Route
       path={path}
       render={() => (
-        auth.authenticated
+        getAuthorized()
           ? children
           : <Redirect to="/login" />
       )}

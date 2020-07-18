@@ -10,11 +10,11 @@ import useAuth from '../../context/useAuth';
 import './Header.css';
 
 const Header = () => {
-  const { auth } = useAuth();
+  const { getAuthorized } = useAuth();
 
   return (
     <NavBar bg="dark" variant="dark">
-      <NavBar.Brand as={Link} to={auth.authenticated ? '/browse' : '/'} className="mr-auto">
+      <NavBar.Brand as={Link} to={getAuthorized() ? '/browse' : '/'} className="mr-auto">
         Sortr
       </NavBar.Brand>
       <HeaderContent />
@@ -25,10 +25,12 @@ const Header = () => {
 const HeaderContent = () => {
   const {
     auth,
+    getFetching,
+    getAuthorized,
     signOut,
   } = useAuth();
 
-  if (auth.authenticating) {
+  if (getFetching()) {
     return <Spinner className="mr-3" size="sm" variant="primary" animation="border" />;
   }
 
@@ -45,7 +47,7 @@ const HeaderContent = () => {
       .catch((err) => console.error(err));
   };
 
-  if (auth.authenticated) {
+  if (getAuthorized()) {
     return (
       <>
         <Nav variant="dark">

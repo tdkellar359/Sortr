@@ -4,37 +4,37 @@ import { AuthContext } from './AuthContext';
 const useAuth = () => {
   const [auth, setAuth] = useContext(AuthContext);
 
-  const authenticationSuccess = (username, filename) => {
+  const setAuthorized = (username, filename) => {
     setAuth({
-      authenticating: false,
-      finished: true,
-      authenticated: true,
+      status: 'authorized',
+      initial: false,
       username,
       filename,
     });
   };
 
-  /**
-   * TODO
-   * Something is sketchy here...
-   * The AuthContext is getting set to authenticated,
-   * but authenticationEnd is overwritting that value for
-   * some reason
-   */
-  const authenticationEnd = () => {
-    console.log(auth);
+  const setFetching = () => {
     setAuth({
-      ...auth,
-      authenticating: false,
-      finished: true,
+      status: 'fetching',
+      initial: false,
+      username: '',
+      filename: '',
+    });
+  };
+
+  const setUnauthorized = () => {
+    setAuth({
+      status: 'unauthorized',
+      initial: false,
+      username: '',
+      filename: '',
     });
   };
 
   const signOut = () => {
     setAuth({
-      authenticated: false,
-      authenticating: false,
-      finished: false,
+      status: 'unauthorized',
+      initial: false,
       username: '',
       filename: '',
     });
@@ -42,8 +42,12 @@ const useAuth = () => {
 
   return {
     auth,
-    authenticationSuccess,
-    authenticationEnd,
+    setFetching,
+    setAuthorized,
+    setUnauthorized,
+    getAuthorized: () => (auth.status === 'authorized'),
+    getFetching: () => (auth.status === 'fetching'),
+    getUnauthorized: () => (auth.status === 'unauthorized'),
     signOut,
   };
 };

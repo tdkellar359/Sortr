@@ -5,11 +5,10 @@ const AuthContext = createContext([{}, () => {}]);
 
 const AuthContextProvider = ({ children }) => {
   const [state, setState] = useState({
-    authenticating: false,
-    authenticated: false,
+    status: 'fetching',
+    initial: true,
     username: '',
     filename: '',
-    finished: false,
   });
 
   console.log('[AuthContext.jsx]: Render with state:', state);

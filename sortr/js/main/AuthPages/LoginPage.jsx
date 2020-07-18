@@ -8,7 +8,7 @@ import useAuth from '../../context/useAuth';
 
 const LoginPage = () => {
   const [error, setError] = useState(false);
-  const { authenticationSuccess } = useAuth();
+  const { setAuthorized } = useAuth();
 
   const handleSubmit = (event) => {
     const form = event.currentTarget;
@@ -39,7 +39,7 @@ const LoginPage = () => {
       })
       .then(() => {
         // TODO: Get filename
-        authenticationSuccess(form.username.value, 'static/assets/default_profile_pic.png');
+        setAuthorized(form.username.value, 'static/assets/default_profile_pic.png');
       })
       .catch((err) => {
         console.error(err);

@@ -12,9 +12,9 @@ const FormWrapper = ({ children }) => {
     padding: '30px',
   };
 
-  const { auth } = useAuth();
+  const { getAuthorized } = useAuth();
 
-  if (auth.authenticated) {
+  if (getAuthorized()) {
     return (
       <Redirect to="/browse" />
     );

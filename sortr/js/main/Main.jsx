@@ -23,12 +23,14 @@ const Main = () => (
 const App = () => {
   const {
     auth,
-    authenticationSuccess,
-    authenticationEnd,
+    setAuthorized,
+    setUnauthorized,
+    setFetching,
   } = useAuth();
 
-  console.log('[Main.jsx] auth', auth);
-  if (!auth.finished && !auth.authenticating) {
+  if (auth.initial) {
+    setFetching();
+
     fetch('/api/v1/accounts/authenticate')
       .then((res) => {
         if (!res.ok) {
@@ -41,15 +43,12 @@ const App = () => {
         if (data.authenticated) {
           const { username, filename } = data.data;
 
-          authenticationSuccess(username, filename);
+          setAuthorized(username, filename);
         }
       })
       .catch((err) => {
         console.error(err);
-      })
-      .finally(() => {
-        console.log('[Main.tsx]: Calling authenticationEnd()');
-        authenticationEnd();
+        setUnauthorized();
       });
   }
 

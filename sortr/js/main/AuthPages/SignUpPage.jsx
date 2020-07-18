@@ -6,7 +6,7 @@ import FormWrapper from './FormWrapper';
 import useAuth from '../../context/useAuth';
 
 const SignUpPage = () => {
-  const { authenticationSuccess } = useAuth();
+  const { setAuthorized } = useAuth();
   const [validated, setValidated] = useState(false);
 
   const handleSubmit = (event) => {
@@ -43,7 +43,7 @@ const SignUpPage = () => {
         }
 
         // TODO: Get filename
-        authenticationSuccess(form.username.value, 'static/assets/default_profile_pic.png');
+        setAuthorized(form.username.value, 'static/assets/default_profile_pic.png');
 
         return res.json();
       })
