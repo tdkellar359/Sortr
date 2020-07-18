@@ -14,7 +14,6 @@ const HomePage = () => {
   const pageStyle = {
     width: '100%',
     height: '100%',
-    padding: '20px',
   };
 
   let path;
@@ -25,7 +24,7 @@ const HomePage = () => {
   }
 
   return (
-    <div className="HomePage" style={pageStyle}>
+    <div className="HomePage p-3" style={pageStyle}>
       <Container fluid>
         <Row>
           <Col md={3}>

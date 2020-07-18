@@ -9,6 +9,14 @@ const iconSrc = (ext) => {
       return '/static/assets/txt_icon_24x24.png';
     case 'pdf':
       return '/static/assets/pdf_icon_24x24.png';
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+      return '/static/assets/image_icon_24x24.png';
+    case 'docx':
+    case 'doc':
+      return '/static/assets/word_icon_24x24.png';
     default:
       return '/static/assets/file_icon_24x24.png';
   }
@@ -16,7 +24,7 @@ const iconSrc = (ext) => {
 
 const DirectoryItems = ({
   data,
-  customIcons,
+  iconPath,
   currentPath,
   spacing,
 }) => {
@@ -32,11 +40,9 @@ const DirectoryItems = ({
     const className = 'directory-item';
 
     let ext = null;
-    if (customIcons) {
-      const fileParts = item.name.split('.').filter((x) => x.length !== 0);
-      if (fileParts.length > 1) {
-        ext = fileParts[fileParts.length - 1];
-      }
+    const fileParts = item.name.split('.').filter((x) => x.length !== 0);
+    if (fileParts.length > 1) {
+      ext = fileParts[fileParts.length - 1];
     }
 
     key += 1;
@@ -51,7 +57,7 @@ const DirectoryItems = ({
         <div>
           <Image
             fluid
-            src={iconSrc(ext)}
+            src={iconPath || iconSrc(ext)}
             alt="Icon"
           />
           {' '}
@@ -66,6 +72,7 @@ export const FolderComponents = ({ currentPath, folders }) => (
   <DirectoryItems
     data={folders}
     currentPath={currentPath}
+    iconPath="/static/assets/folder_icon_24x24.png"
     spacing="8"
   />
 );
@@ -83,7 +90,6 @@ export const FileComponents = ({ currentPath, files }) => (
   <DirectoryItems
     data={files}
     currentPath={currentPath}
-    customIcons
     spacing="8"
   />
 );

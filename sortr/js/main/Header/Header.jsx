@@ -50,7 +50,7 @@ const HeaderContent = () => {
   if (getAuthorized()) {
     return (
       <>
-        <Nav variant="dark">
+        <Nav>
           <Image
             src={auth.filename}
             height={window.screen.height / 18}
@@ -58,7 +58,7 @@ const HeaderContent = () => {
             roundedCircle
           />
         </Nav>
-        <Nav>
+        <Nav className="mr-3">
           <NavDropdown title="Your Account" id="account-nav-dropdown">
             <NavDropdown.Item disabled>
               {auth.username}
