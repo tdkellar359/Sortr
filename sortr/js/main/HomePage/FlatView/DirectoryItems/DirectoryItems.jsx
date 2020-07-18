@@ -14,12 +14,6 @@ const iconSrc = (ext) => {
   }
 };
 
-const directoryItemStyle = {
-  border: 'solid lightgrey 0.5px',
-  borderRadius: '5px',
-  padding: '8px',
-};
-
 const DirectoryItems = ({
   data,
   customIcons,
@@ -27,11 +21,15 @@ const DirectoryItems = ({
   spacing,
 }) => {
   let key = 0;
-  return data.map((item, idx) => {
-    let className = 'directory-item';
-    if (idx > 0) {
-      className += (spacing ? ` ml-${spacing}` : ' ml-3');
-    }
+  const directoryItemStyle = {
+    border: 'solid lightgrey 0.5px',
+    borderRadius: '5px',
+    padding: '8px',
+    margin: `${spacing}px`,
+    flex: '1 1 content',
+  };
+  return data.map((item) => {
+    const className = 'directory-item';
 
     let ext = null;
     if (customIcons) {
@@ -68,7 +66,7 @@ export const FolderComponents = ({ currentPath, folders }) => (
   <DirectoryItems
     data={folders}
     currentPath={currentPath}
-    spacing="3"
+    spacing="8"
   />
 );
 
@@ -86,7 +84,7 @@ export const FileComponents = ({ currentPath, files }) => (
     data={files}
     currentPath={currentPath}
     customIcons
-    spacing="3"
+    spacing="8"
   />
 );
 

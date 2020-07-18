@@ -16,7 +16,15 @@
   </head>
   <body>
     <div id="reactEntry">
-      Loading...
+      <div style="margin-top: 25vh;">
+        <h1 style="text-align: center;">Sortr</h1>
+        <div style="display: flex; justify-content: space-around; align-items: center;">
+          <img 
+            src={{ url_for("static", filename="assets/loading.gif") }} alt="loading..."
+            style="max-width: 10vw; height: auto; margin: 16px;"
+          />
+        </div>
+      </div>
     </div>
   </body>
   <script type="text/javascript" src={{ url_for("static", filename="js/bundle.js") }}></script>

@@ -61,7 +61,6 @@ const BreadCrumbItems = ({ path }) => {
         key={key}
         linkAs={Link}
         linkProps={{ to: `/browse/${btoa(currentPath)}` }}
-        // onClick={() => this.forceUpdate()}
         active={idx === directories.length - 1}
       >
         { dir }
