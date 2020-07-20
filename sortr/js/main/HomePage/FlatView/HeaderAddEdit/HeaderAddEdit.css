@@ -1,0 +1,9 @@
+.add-button {
+  transition: 250ms;
+}
+
+.add-button:hover {
+  color: white;
+  background-color: #007BFF !important;
+  transition: 250ms;
+}

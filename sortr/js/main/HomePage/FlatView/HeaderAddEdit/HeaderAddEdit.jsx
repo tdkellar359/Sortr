@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Image from 'react-bootstrap/Image';
 import Collapse from 'react-bootstrap/Collapse';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
+import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import FilterInput from './FilterInput';
 import styles from '../../styles';
+import './HeaderAddEdit.css';
 
 const HeaderAddEdit = ({
   title,
@@ -16,20 +18,74 @@ const HeaderAddEdit = ({
   gutter,
 }) => {
   const [open, setOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const className = `button-icon-background ml-${gutter}`;
+
+  const popover = (
+    <Popover>
+      <Popover.Title as="h3">Add</Popover.Title>
+      <Popover.Content>
+        <Button
+          as="div"
+          onClick={() => setShowModal(true)}
+        >
+          Add New
+        </Button>
+        <hr className="my-2" />
+        <Button
+          as="div"
+        >
+          Upload Existing
+        </Button>
+      </Popover.Content>
+    </Popover>
+  );
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
+  // TODO: Make this say file/folder instead of item
+  const modal = (
+    <Modal centered show={showModal} onHide={handleClose}>
+      <Modal.Header>
+        <h3>Add New Item</h3>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group controlId="name">
+            <Form.Label>
+              Name
+            </Form.Label>
+            <Form.Control type="text" placeholder="Name" required />
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="primary">
+          Add
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
 
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <h4 style={{ width: '8vw' }}>{ title }</h4>
         <div className={className}>
-          <Image
-            fluid
-            src={src}
-            alt="Add"
-            height={size}
-            width={size}
-          />
+          <OverlayTrigger trigger="click" placement="right" overlay={popover} rootClose>
+            <Image
+              fluid
+              src={src}
+              alt="Add"
+              height={size}
+              width={size}
+            />
+          </OverlayTrigger>
         </div>
         <div className={className}>
           <Image
@@ -42,6 +98,7 @@ const HeaderAddEdit = ({
           />
         </div>
       </div>
+      { modal }
       <Collapse in={open}>
         <div style={styles.filersStyle}>
           <h6>Filters:</h6>
@@ -67,50 +124,6 @@ HeaderAddEdit.propTypes = {
 HeaderAddEdit.defaultProps = {
   size: 24,
   gutter: 2,
-};
-
-const FilterInput = ({ active }) => {
-  const [dropDownTitle, setDropDownTitle] = useState('Select a Filter');
-  const [disabled, setDisabled] = useState(true);
-  const [controlType, setControlType] = useState('text');
-
-  const onSelectFilter = (name, dataType) => {
-    setDropDownTitle(name);
-    setControlType(dataType);
-    setDisabled(false);
-  };
-
-  return (
-    <InputGroup className="mb-3">
-      <DropdownButton
-        as={InputGroup.Prepend}
-        variant="outline-primary"
-        title={dropDownTitle}
-        id="input-group-dropdown-1"
-      >
-        <Dropdown.Item onClick={() => onSelectFilter('Alphabetical', 'text')}>Alphabetical</Dropdown.Item>
-        <Dropdown.Item onClick={() => onSelectFilter('Date Modified', 'date')}>Date Modified</Dropdown.Item>
-        <Dropdown.Item onClick={() => onSelectFilter('Date Created', 'date')}>Date Created</Dropdown.Item>
-        <Dropdown.Item onClick={() => onSelectFilter('Limit', 'number')}>Limit</Dropdown.Item>
-        <Dropdown.Item onClick={() => onSelectFilter('Search', 'text')}>Search</Dropdown.Item>
-      </DropdownButton>
-      <Form.Control disabled={disabled} type={controlType}></Form.Control>
-      <InputGroup.Append>
-        <Button
-          variant={active ? 'outline-warning' : 'outline-success'}
-        >
-          {active ? 'Disable' : 'Enable'}
-        </Button>
-      </InputGroup.Append>
-      <InputGroup.Append>
-        <Button variant="outline-danger">Remove</Button>
-      </InputGroup.Append>
-    </InputGroup>
-  );
-};
-
-FilterInput.propTypes = {
-  active: PropTypes.bool.isRequired,
 };
 
 export default HeaderAddEdit;

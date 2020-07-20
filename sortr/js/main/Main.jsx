@@ -52,7 +52,7 @@ const App = () => {
       });
   }
 
-  const browseHomePath = btoa('home/');
+  const browseHomePath = btoa('home');
   return (
     <Router>
       <div>

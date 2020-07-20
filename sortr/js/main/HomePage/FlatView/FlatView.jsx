@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Spinner from 'react-bootstrap/Spinner';
 import { Redirect } from 'react-router-dom';
 import { FolderComponents, FileComponents } from './DirectoryItems/DirectoryItems';
+import { getFiles, getFolders } from '../../../api/directory';
+import FlexDisplay from './FlexDisplay';
 import HeaderAddEdit from './HeaderAddEdit/HeaderAddEdit';
 import styles from '../styles';
 
@@ -20,34 +21,17 @@ class FlatView extends React.Component {
       redirect: null,
     };
 
-    this.fetchDirectoryData = this.fetchDirectoryData.bind(this);
     this.loadFolders = this.loadFolders.bind(this);
     this.loadFiles = this.loadFiles.bind(this);
   }
 
   componentDidMount() {
-    const { loadingFolders, loadingFiles } = this.state;
-    this.mounted = true;
-
-    if (!loadingFolders) {
-      this.loadFolders();
-    }
-
-    if (!loadingFiles) {
-      this.loadFiles();
-    }
+    this.updateView();
   }
 
   componentDidUpdate(prevProps) {
     if (this.props !== prevProps) {
-      const { loadingFolders, loadingFiles } = this.state;
-      if (!loadingFolders) {
-        this.loadFolders();
-      }
-
-      if (!loadingFiles) {
-        this.loadFiles();
-      }
+      this.updateView();
     }
   }
 
@@ -55,68 +39,73 @@ class FlatView extends React.Component {
     this.mounted = false;
   }
 
-  fetchDirectoryData(url, init, success, failure) {
-    init();
+  updateView() {
+    const {
+      loadingFolders,
+      folderError,
+      loadingFiles,
+      fileError,
+    } = this.state;
+    this.mounted = true;
 
-    const { pathHash } = this.props;
+    if (!loadingFolders && !folderError) {
+      this.loadFolders();
+    }
 
-    fetch(url + pathHash)
-      .then((res) => {
-        if (res.ok) {
-          return Promise.resolve(res.json());
-        }
-
-        return Promise.reject(res.statusText);
-      })
-      .then((data) => {
-        if (this.mounted) {
-          success(data.results);
-        }
-      })
-      .catch((err) => {
-        console.warn('Handled: ', err);
-        if (this.mounted) {
-          failure();
-        }
-      });
+    if (!loadingFiles && !fileError) {
+      this.loadFiles();
+    }
   }
 
   loadFolders() {
-    this.fetchDirectoryData(
-      '/api/v1/directory/folders/',
-      () => this.setState({
-        loadingFolders: true,
-        folderError: false,
-      }),
-      (results) => this.setState({
-        loadingFolders: false,
-        folders: results,
-      }),
-      () => this.setState({
-        loadingFolders: false,
-        folderError: true,
-        redirect: '/browse',
-      }),
-    );
+    const { pathHash } = this.props;
+
+    this.setState({
+      loadingFolders: true,
+      folderError: false,
+    });
+
+    getFolders(pathHash)
+      .then((data) => {
+        this.setState({
+          loadingFolders: false,
+          folders: data.results,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+
+        this.setState({
+          loadingFolders: false,
+          folderError: true,
+        });
+      });
   }
 
   loadFiles() {
-    this.fetchDirectoryData(
-      '/api/v1/directory/files/',
-      () => this.setState({
-        loadingFiles: true,
-        fileError: false,
-      }),
-      (results) => this.setState({
-        loadingFiles: false,
-        files: results,
-      }),
-      () => this.setState({
-        loadingFiles: false,
-        fileError: true,
-        redirect: '/browse',
-      }),
-    );
+    const { pathHash } = this.props;
+
+    this.setState({
+      loadingFiles: true,
+      fileError: false,
+    });
+
+    getFiles(pathHash)
+      .then((data) => {
+        console.log(data);
+        this.setState({
+          loadingFiles: false,
+          files: data.results,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+
+        this.setState({
+          loadingFiles: false,
+          fileError: true,
+        });
+      });
   }
 
   render() {
@@ -147,8 +136,12 @@ class FlatView extends React.Component {
           gutter={4}
         />
 
-        <FlexDisplay numChildren={folders.length} fetching={loadingFolders} error={folderError}>
-          <FolderComponents currentPath={currentPath} folders={folders} />
+        <FlexDisplay
+          numChildren={folders ? folders.length : 0}
+          fetching={loadingFolders}
+          error={folderError}
+        >
+          <FolderComponents currentPath={currentPath} folders={folders || []} />
         </FlexDisplay>
 
         <HeaderAddEdit
@@ -158,8 +151,12 @@ class FlatView extends React.Component {
           gutter={4}
         />
 
-        <FlexDisplay numChildren={files.length} fetching={loadingFiles} error={fileError}>
-          <FileComponents currentPath={currentPath} files={files} />
+        <FlexDisplay
+          numChildren={files ? files.length : 0}
+          fetching={loadingFiles}
+          error={fileError}
+        >
+          <FileComponents currentPath={currentPath} files={files || []} />
         </FlexDisplay>
 
       </div>
@@ -170,53 +167,5 @@ class FlatView extends React.Component {
 FlatView.propTypes = {
   pathHash: PropTypes.string.isRequired,
 };
-
-const FlexDisplay = ({
-  children,
-  numChildren,
-  fetching,
-  error,
-}) => {
-  const flexBox = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    marginBottom: '16px',
-  };
-
-  let elt;
-  if (fetching && !error) {
-    elt = <LoadingAnimation />;
-  } else if (!fetching && !error) {
-    elt = (
-      <div style={flexBox}>
-        { numChildren > 0
-          ? children
-          : <p className="text-muted">Nothing to see here!</p> }
-      </div>
-    );
-  } else {
-    elt = <p className="text-muted">Uh oh! Something went wrong...</p>;
-  }
-
-  return (
-    <div style={flexBox}>
-      { elt }
-    </div>
-  );
-};
-
-FlexDisplay.propTypes = {
-  children: PropTypes.node.isRequired,
-  numChildren: PropTypes.number.isRequired,
-  fetching: PropTypes.bool.isRequired,
-  error: PropTypes.bool.isRequired,
-};
-
-const LoadingAnimation = () => (
-  <div className="mt-0">
-    <Spinner animation="border" variant="primary" />
-  </div>
-);
 
 export default FlatView;

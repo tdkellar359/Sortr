@@ -52,7 +52,11 @@ const BreadCrumbItems = ({ path }) => {
   let key = 0;
   let currentPath = '';
   return directories.map((dir, idx) => {
-    currentPath += `${dir}/`;
+    if (idx === 0) {
+      currentPath += dir;
+    } else {
+      currentPath += `/${dir}`;
+    }
 
     key += 1;
     return (

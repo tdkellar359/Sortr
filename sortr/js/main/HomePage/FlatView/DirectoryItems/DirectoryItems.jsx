@@ -36,11 +36,12 @@ const DirectoryItems = ({
     margin: `${spacing}px`,
     flex: '1 1 content',
   };
+
   return data.map((item) => {
     const className = 'directory-item';
 
     let ext = null;
-    const fileParts = item.name.split('.').filter((x) => x.length !== 0);
+    const fileParts = item.itemName.split('.').filter((x) => x.length !== 0);
     if (fileParts.length > 1) {
       ext = fileParts[fileParts.length - 1];
     }
@@ -49,7 +50,7 @@ const DirectoryItems = ({
 
     return (
       <Link
-        to={btoa(`${currentPath}${item.name}/`)}
+        to={btoa(`${currentPath}/${item.itemName}`)}
         key={key}
         className={className}
         style={directoryItemStyle}
@@ -61,7 +62,7 @@ const DirectoryItems = ({
             alt="Icon"
           />
           {' '}
-          { item.name }
+          { item.itemName }
         </div>
       </Link>
     );
@@ -81,7 +82,9 @@ FolderComponents.propTypes = {
   currentPath: PropTypes.string.isRequired,
   folders: PropTypes.arrayOf(
     PropTypes.shape({
-      name: PropTypes.string.isRequired,
+      itemName: PropTypes.string.isRequired,
+      pathname: PropTypes.string.isRequired,
+      objectUrl: PropTypes.string,
     }),
   ).isRequired,
 };
@@ -98,8 +101,9 @@ FileComponents.propTypes = {
   currentPath: PropTypes.string.isRequired,
   files: PropTypes.arrayOf(
     PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      path: PropTypes.string.isRequired,
+      itemName: PropTypes.string.isRequired,
+      pathname: PropTypes.string.isRequired,
+      objectUrl: PropTypes.string,
     }),
   ).isRequired,
 };
