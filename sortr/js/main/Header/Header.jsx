@@ -14,8 +14,16 @@ const Header = () => {
 
   return (
     <NavBar bg="dark" variant="dark">
-      <NavBar.Brand as={Link} to={getAuthorized() ? '/browse' : '/'} className="mr-auto">
-        Sortr
+      <NavBar.Brand
+        as={Link}
+        to={getAuthorized() ? '/browse' : '/'}
+        className="mr-auto"
+      >
+        <Image
+          src="/static/assets/sortr_brand_logo.png"
+          className="d-inline-block align-top"
+          height="30"
+        />
       </NavBar.Brand>
       <HeaderContent />
     </NavBar>
@@ -53,7 +61,7 @@ const HeaderContent = () => {
         <Nav>
           <Image
             src={auth.filename}
-            height={window.screen.height / 18}
+            height={40}
             width="auto"
             roundedCircle
           />

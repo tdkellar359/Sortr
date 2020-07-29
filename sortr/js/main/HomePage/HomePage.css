@@ -5,18 +5,19 @@ a.directory-item {
 }
 
 a.directory-item:hover {
-  border: solid #007BFF 2px !important;
-  color: #007BFF !important;
+  border: solid var(--primary) 2px !important;
+  color: var(--primary) !important;
   text-decoration: none !important;
   transition: 250ms;
 }
 
 .button-icon-background {
-  padding: 5px;
+  padding: 8px;
   border-radius: 50%;
   transition: 250ms;
 }
 
 .button-icon-background:hover {
-  background-color: lightgrey;
+  background-color: var(--light);
+  cursor: pointer;
 }

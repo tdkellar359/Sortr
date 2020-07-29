@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Image from 'react-bootstrap/Image';
+import Fade from 'react-bootstrap/Fade';
 import { Link } from 'react-router-dom';
 
 const iconSrc = (ext) => {
@@ -48,23 +49,25 @@ const DirectoryItems = ({
 
     key += 1;
 
+    // TODO: Make this fade in correctly
     return (
-      <Link
-        to={btoa(`${currentPath}/${item.itemName}`)}
-        key={key}
-        className={className}
-        style={directoryItemStyle}
-      >
-        <div>
-          <Image
-            fluid
-            src={iconPath || iconSrc(ext)}
-            alt="Icon"
-          />
-          {' '}
-          { item.itemName }
-        </div>
-      </Link>
+      <Fade appear in mountOnEnter key={key}>
+        <Link
+          to={btoa(`${currentPath}/${item.itemName}`)}
+          className={className}
+          style={directoryItemStyle}
+        >
+          <div>
+            <Image
+              fluid
+              src={iconPath || iconSrc(ext)}
+              alt="Icon"
+            />
+            {' '}
+            { item.itemName }
+          </div>
+        </Link>
+      </Fade>
     );
   });
 };

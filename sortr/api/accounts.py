@@ -18,7 +18,6 @@ def check_password(username, password):
     )
 
     item = user_obj.get('Item')
-    print(item)
 
     if item is not None:
         db_password = item['passwordHash']
@@ -104,5 +103,5 @@ def authenticate():
 @sortr.app.route('/api/v1/accounts/signout', methods=['POST'])
 def sign_out():
     flask.session.pop('login')
-     
+
     return 'Success', 200
